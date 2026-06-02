@@ -1,0 +1,240 @@
+AI SaaS Website Builder - Worklist
+Last updated: 2026-06-02
+
+Purpose
+This file is the step-by-step task list for building the project from scratch.
+We will complete tasks one by one and update the status as we go.
+
+Status legend
+[ ] Not started
+[~] In progress
+[x] Completed
+[!] Blocked or needs decision
+
+Working rules
+1. Do not write feature code before the architecture and task are clear.
+2. Complete one task at a time.
+3. Keep backend, frontend, database, AI workflow, and deployment concerns
+   separated.
+4. Define API contracts before implementing API code.
+5. Update this worklist after each completed task.
+6. Keep PROJECT_FEATURES.txt as the feature reference and this file as the
+   execution checklist.
+
+Phase 1 - Understand and plan
+[x] Create PROJECT_FEATURES.txt from the project PDF.
+[x] Add architecture, design patterns, API planning, and workflow rules.
+[x] Create WORKLIST.txt.
+[x] Review the project objective together.
+[x] Confirm MVP scope.
+[x] Confirm advanced features that should wait until later.
+[x] Confirm final tech stack.
+[x] Decide project folder structure.
+
+Phase 2 - Backend foundation
+[x] Define backend folder architecture.
+[x] Define FastAPI app entrypoint structure.
+[x] Define environment configuration approach.
+[x] Define API response format.
+[x] Define error handling pattern.
+[x] Define validation/schema pattern.
+[x] Create health check API plan.
+[x] Implement health check API.
+[x] Test health check API.
+[x] Update PROJECT_FEATURES.txt with backend foundation status.
+
+Phase 3 - Data models and API contracts
+[x] Define user requirement input schema.
+[x] Define website project schema.
+[x] Define website section schema.
+[x] Define theme schema.
+[x] Define generated content schema.
+[x] Define prompt run schema.
+[ ] Define project version schema.
+[x] Write API contract for POST /api/websites/generate.
+[ ] Write API contract for GET /api/projects/{project_id}.
+[ ] Write API contract for PUT /api/projects/{project_id}.
+
+Phase 4 - Requirement input workflow
+[x] Define user flow for entering business requirements.
+[x] Define required fields.
+[x] Define optional fields.
+[x] Define validation rules.
+[x] Define example request payload.
+[x] Define example response payload.
+[x] Implement backend requirement validation.
+[x] Test valid input.
+[x] Test invalid input.
+
+Phase 5 - Prompt optimization engine
+[ ] Define prompt template structure.
+[ ] Define prompt optimization service responsibility.
+[ ] Define prompt versioning approach.
+[ ] Define AI provider abstraction.
+[ ] Create first website generation prompt template.
+[ ] Create prompt output format rules.
+[ ] Test prompt building without calling AI.
+[ ] Add AI call only after prompt structure is approved.
+
+Phase 6 - AI website structure generation
+[x] Define website structure JSON format.
+[x] Define required default sections.
+[x] Define optional sections.
+[x] Define section ordering rules.
+[x] Generate first structured website plan.
+[x] Validate AI output.
+[x] Return structured website plan from backend.
+[x] Test successful website structure generation.
+
+Phase 7 - AI content generation
+[x] Define content fields for each section.
+[x] Define SEO fields.
+[x] Define tone and audience rules.
+[x] Generate hero content.
+[x] Generate about content.
+[x] Generate services content.
+[x] Generate pricing content.
+[x] Generate contact content.
+[x] Validate content output.
+
+Phase 8 - Theme and styling engine
+[x] Define theme JSON format.
+[x] Define color palette rules.
+[x] Define font recommendation rules.
+[x] Define spacing and layout rules.
+[x] Generate first theme from business requirements.
+[x] Validate theme output.
+[x] Connect theme output to preview data.
+
+Phase 9 - Frontend foundation
+[ ] Decide frontend build tool.
+[ ] Create frontend folder structure.
+[ ] Set up React.
+[ ] Set up Tailwind CSS.
+[ ] Define frontend routing approach.
+[ ] Define shared API client approach.
+[ ] Define UI component organization.
+[ ] Create basic app shell.
+
+Phase 10 - Live website preview
+[x] Define preview data structure.
+[x] Build preview renderer for structured sections.
+[x] Render hero section.
+[x] Render about section.
+[x] Render services section.
+[x] Render pricing section.
+[x] Render contact section.
+[x] Apply theme values to preview.
+[ ] Test preview on desktop.
+[ ] Test preview on mobile.
+
+Phase 11 - Project saving and dashboard
+[ ] Confirm MongoDB setup.
+[ ] Define database connection pattern.
+[ ] Create project repository.
+[ ] Save generated website project.
+[ ] List saved projects.
+[ ] Open saved project.
+[ ] Update saved project.
+[ ] Add dashboard page.
+
+Phase 12 - Authentication
+[ ] Define auth approach.
+[ ] Define user model.
+[ ] Define signup API contract.
+[ ] Define login API contract.
+[ ] Implement signup.
+[ ] Implement login.
+[ ] Protect project APIs.
+[ ] Connect dashboard to authenticated user.
+
+Phase 13 - React code generation
+[ ] Define generated project folder format.
+[ ] Define component naming rules.
+[ ] Generate reusable React components.
+[ ] Generate Tailwind class output.
+[ ] Validate generated code structure.
+[ ] Prepare export-ready frontend files.
+
+Phase 14 - Image generation
+[ ] Define image prompt format.
+[ ] Define image provider strategy.
+[ ] Generate hero image prompt.
+[ ] Generate section image prompts.
+[ ] Call image generation API.
+[ ] Store image metadata.
+[ ] Show images in preview.
+
+Phase 15 - Export and deployment
+[ ] Define export package structure.
+[ ] Generate downloadable React project.
+[ ] Add Docker export support.
+[ ] Define deployment provider approach.
+[ ] Add Vercel or AWS deployment workflow.
+[ ] Add GitHub repository generation later.
+
+Phase 16 - Website assistant chatbot
+[ ] Define edit command format.
+[ ] Define project state input to chatbot.
+[ ] Define structured edit response.
+[ ] Implement section edit commands.
+[ ] Add project versioning.
+[ ] Add rollback support.
+[ ] Connect chatbot to editor UI.
+
+Phase 17 - Polish and presentation
+[ ] Improve README documentation.
+[ ] Add architecture diagram.
+[ ] Add screenshots.
+[ ] Add demo video plan.
+[ ] Add deployment link.
+[ ] Prepare resume and LinkedIn notes.
+
+Task 1 result - Project objective review
+Completed:
+The project objective is to build an AI-powered SaaS website builder from
+scratch. Users will enter business requirements, and the system will generate
+a modern responsive website plan, content, theme, preview data, and later
+deployment-ready React code.
+
+What this task developed:
+- No application code.
+- Clear project direction.
+- Shared understanding of what the app should become.
+
+How to test this task:
+1. Open PROJECT_FEATURES.txt.
+2. Confirm the objective matches the PDF and your project idea.
+3. Open WORKLIST.txt.
+4. Confirm this task is marked completed.
+5. Confirm the next task is MVP scope planning.
+
+Current next task
+[ ] Open localhost UI and visually test preview on desktop and mobile.
+
+Notes
+- First runnable localhost slice is implemented.
+- Current generator is deterministic local logic, not a real AI provider yet.
+- React, Tailwind, database, authentication, export, and deployment are still
+  planned later phases.
+- Automated in-app browser visual testing was blocked by the local Windows
+  spawn issue in this environment. HTTP/API checks passed, and the next check
+  should be done by opening the localhost UI manually.
+
+Implemented slice 1 - Local MVP backend and UI
+Developed:
+- FastAPI backend entrypoint in backend/app.py.
+- Layered backend folders for api, core, schemas, and services.
+- Health API: GET /api/health.
+- Website draft API: POST /api/websites/generate.
+- Deterministic website generator service.
+- Static localhost UI served from backend/static.
+- README run instructions.
+
+How to test:
+1. Run: python -m uvicorn backend.app:app --reload --host 127.0.0.1 --port 8000
+2. Open: http://127.0.0.1:8000
+3. Click Generate Draft.
+4. Confirm the preview and JSON tabs update.
+5. Open: http://127.0.0.1:8000/api/health
+6. Confirm the response status is success.

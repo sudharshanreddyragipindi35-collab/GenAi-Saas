@@ -1,0 +1,551 @@
+AI SaaS Website Builder - Feature Tracker
+Source: Gen_Ai_SaaS_Project.pdf
+Last updated: 2026-06-02
+
+Project objective
+Build an AI-powered SaaS platform that generates modern, responsive,
+deployment-ready websites from user business requirements.
+
+Reviewed objective
+The project will be built from scratch as an AI SaaS Website Builder.
+The first goal is not to generate every advanced feature immediately. The
+first goal is to create a clean foundation where a user can enter business
+requirements and receive a structured website draft that can later become a
+live preview, editable project, generated React code, and deployed website.
+
+Development approach
+- Build the project from scratch.
+- Do not copy a ready-made SaaS template.
+- Understand, document, design, then implement each feature one by one.
+- Follow a clear architecture before adding feature code.
+- Keep APIs, data models, services, and UI responsibilities separated.
+- Update this document whenever a feature is understood, designed, started,
+  completed, or changed.
+- Do not move to the next feature until the current feature has a clear goal,
+  workflow, API contract, expected inputs, expected outputs, and test idea.
+
+Current repository status
+- README.md contains local run and test instructions.
+- backend/app.py now creates the FastAPI application.
+- The backend has layered api, core, schemas, and services folders.
+- A static local UI is served from backend/static.
+- GET /api/health is implemented.
+- POST /api/websites/generate is implemented with deterministic local logic.
+- No real OpenAI, MongoDB, authentication, export, or deployment integration
+  is implemented yet.
+
+Architecture plan
+
+1. Frontend application
+   Responsibility:
+   Collect user requirements, show generated website previews, allow edits,
+   and manage the user dashboard.
+
+   Planned technology:
+   - React.js
+   - Tailwind CSS
+   - Framer Motion when animation is useful
+
+   Main frontend areas:
+   - Requirement input form
+   - Website preview page
+   - Project dashboard
+   - Website editor
+   - Export/deployment screen
+
+2. Backend API
+   Responsibility:
+   Receive frontend requests, validate input, coordinate AI workflows, store
+   website projects, and return structured generated results.
+
+   Planned technology:
+   - FastAPI
+   - Python service modules
+   - REST API endpoints
+
+   Main backend areas:
+   - API routes
+   - Request and response schemas
+   - Business logic services
+   - AI workflow orchestration
+   - Database access layer
+
+3. AI workflow layer
+   Responsibility:
+   Convert user requirements into optimized prompts and structured website
+   outputs.
+
+   Planned technology:
+   - OpenAI API
+   - LangChain if orchestration becomes complex enough
+   - Prompt templates
+
+   Main AI workflow areas:
+   - Prompt optimization
+   - Website structure generation
+   - Content generation
+   - React component generation
+   - Image prompt generation
+   - Conversational website edits
+
+4. Database layer
+   Responsibility:
+   Store users, generated website projects, prompts, generated content, and
+   project versions.
+
+   Planned technology:
+   - MongoDB
+
+   Main collections:
+   - users
+   - website_projects
+   - generated_pages
+   - prompt_runs
+   - deployment_records
+
+5. Deployment layer
+   Responsibility:
+   Package, export, and deploy generated websites.
+
+   Planned technology:
+   - Docker
+   - GitHub Actions
+   - Vercel or AWS EC2
+
+Design patterns to follow
+
+1. Layered architecture
+   Keep API routes, services, AI workflows, and database access separated.
+
+2. Service pattern
+   Put business logic in service modules instead of directly inside route
+   handlers.
+
+3. Repository pattern
+   Keep database operations in repository modules so storage can change later
+   without rewriting the full app.
+
+4. DTO/schema pattern
+   Define request and response shapes clearly before implementation.
+
+5. Template method for AI prompts
+   Use reusable prompt templates so outputs stay consistent across features.
+
+6. Strategy pattern for generators
+   Keep website layout generation, content generation, code generation, and
+   image generation separate so each generator can improve independently.
+
+7. Versioned project state
+   Store generated website versions so users can edit, compare, and rollback
+   later.
+
+API planning rules
+- Every feature should define API endpoints before code starts.
+- Every endpoint should define request body, response body, validation rules,
+  success case, and failure cases.
+- API routes should return structured JSON, not raw AI text.
+- AI responses should be parsed into predictable objects before the frontend
+  uses them.
+- Backend should hide API keys and AI provider details from the frontend.
+- Authentication should be added before storing private user projects.
+
+Planned API groups
+
+1. Health and system
+   GET /api/health
+   Purpose:
+   Confirm that the backend is running.
+
+2. Website generation
+   POST /api/websites/generate
+   Purpose:
+   Generate the first complete website draft from user requirements.
+
+   Expected request:
+   - business_type
+   - company_name
+   - color_theme
+   - required_features
+   - target_audience
+
+   Expected response:
+   - project_id
+   - website_structure
+   - generated_content
+   - theme
+   - preview_data
+
+3. Content generation
+   POST /api/content/generate
+   Purpose:
+   Generate or regenerate SEO-friendly website content.
+
+4. Theme generation
+   POST /api/themes/generate
+   Purpose:
+   Generate colors, fonts, spacing, and responsive styling suggestions.
+
+5. React code generation
+   POST /api/code/react/generate
+   Purpose:
+   Generate React and Tailwind component code from structured website data.
+
+6. Image generation
+   POST /api/images/generate
+   Purpose:
+   Generate image prompts or website images for the selected business.
+
+7. Project management
+   GET /api/projects
+   GET /api/projects/{project_id}
+   PUT /api/projects/{project_id}
+   DELETE /api/projects/{project_id}
+   Purpose:
+   Manage saved website projects.
+
+8. Website editing assistant
+   POST /api/projects/{project_id}/chat
+   Purpose:
+   Modify an existing generated website using conversational instructions.
+
+9. Export and deployment
+   POST /api/projects/{project_id}/export
+   POST /api/projects/{project_id}/deploy
+   Purpose:
+   Export or deploy the generated website.
+
+Input details the user should provide
+1. Business type
+2. Company name
+3. Preferred color theme
+4. Required website features
+5. Target audience
+
+Generated output expected from the system
+1. Landing page UI
+2. React components
+3. SEO-friendly website content
+4. AI-generated images
+5. Responsive layouts
+6. Deployment-ready frontend code
+
+Main features
+
+1. AI Website Generation
+   Goal:
+   Generate complete website layouts using AI prompts.
+
+   Expected sections:
+   - Hero
+   - About
+   - Services
+   - Pricing
+   - Contact
+
+   Architecture notes:
+   - Frontend collects requirements.
+   - Backend validates requirements.
+   - Prompt optimization service prepares the generation prompt.
+   - Website generation service returns structured website sections.
+   - Frontend renders the result in the live preview.
+
+   API contract to design:
+   - POST /api/websites/generate
+
+   Design patterns:
+   - Service pattern for generation logic.
+   - DTO/schema pattern for request and response data.
+   - Strategy pattern for section generation.
+
+   Status:
+   Local MVP implemented.
+   The current implementation generates a structured draft with deterministic
+   backend logic. Real AI generation is still planned for the prompt workflow
+   phase.
+
+2. AI Content Generation
+   Goal:
+   Generate SEO-friendly content for the website.
+
+   Expected content:
+   - Business descriptions
+   - Product or service details
+   - Marketing taglines
+
+   Architecture notes:
+   - Content should be generated separately from layout.
+   - Content output should be structured by section.
+   - SEO metadata should be included early.
+
+   API contract to design:
+   - POST /api/content/generate
+
+   Design patterns:
+   - Service pattern for content generation.
+   - Template method for prompt templates.
+
+   Status:
+   Local MVP implemented.
+   The current implementation returns section content and SEO fields through
+   POST /api/websites/generate. Real AI content generation is still planned.
+
+3. AI React Code Generator
+   Goal:
+   Generate React and Tailwind components dynamically.
+
+   Expected output:
+   - Reusable frontend modules
+   - Component code based on the generated website structure
+
+   Architecture notes:
+   - React code should be generated from structured website data, not from
+     unstructured text.
+   - Generated code should follow the chosen frontend folder structure.
+   - Generated components should stay reusable and readable.
+
+   API contract to design:
+   - POST /api/code/react/generate
+
+   Design patterns:
+   - Strategy pattern for code generators.
+   - DTO/schema pattern for structured component output.
+
+   Status:
+   Planned. Not implemented in the current repo.
+
+4. Theme and Styling Engine
+   Goal:
+   Generate visual styling rules for each website.
+
+   Expected capabilities:
+   - Color palette generation
+   - Font recommendations
+   - Responsive UI styling
+
+   Architecture notes:
+   - Theme data should be stored as structured JSON.
+   - Frontend should apply theme values consistently.
+   - Theme generation should happen before final component generation.
+
+   API contract to design:
+   - POST /api/themes/generate
+
+   Design patterns:
+   - Strategy pattern for theme generation.
+   - Shared theme schema for frontend and backend.
+
+   Status:
+   Local MVP implemented.
+   The current implementation returns structured theme tokens and applies them
+   in the local preview UI.
+
+5. AI Image Generation
+   Goal:
+   Generate business-themed images for the website.
+
+   Expected images:
+   - Website banners
+   - Section images
+   - Visuals matched to the business type
+
+   Architecture notes:
+   - First generate image prompts.
+   - Then call the image provider.
+   - Store generated image metadata with the website project.
+
+   API contract to design:
+   - POST /api/images/generate
+
+   Design patterns:
+   - Provider strategy pattern so image provider can change later.
+   - Repository pattern for storing generated image metadata.
+
+   Status:
+   Planned. Not implemented in the current repo.
+
+6. Live Website Preview
+   Goal:
+   Show the generated website in real time.
+
+   Expected behavior:
+   - Render generated UI dynamically
+   - Update preview when the user changes inputs or edits content
+
+   Architecture notes:
+   - Preview should use structured website data.
+   - Preview should not depend on raw AI text.
+   - Later, preview can support version comparison.
+
+   API contract to design:
+   - GET /api/projects/{project_id}
+   - PUT /api/projects/{project_id}
+
+   Design patterns:
+   - Versioned project state.
+   - Frontend component composition.
+
+   Status:
+   Local MVP implemented.
+   The current implementation renders structured preview data in a browser UI
+   served by the backend.
+
+7. Export and Deployment
+   Goal:
+   Let users export or deploy generated websites.
+
+   Expected capabilities:
+   - Export generated React project
+   - Docker deployment support
+   - GitHub repository generation
+
+   Architecture notes:
+   - Export should package generated code, assets, and config files.
+   - Deployment should be a separate step from export.
+   - GitHub generation should be treated as an advanced workflow.
+
+   API contract to design:
+   - POST /api/projects/{project_id}/export
+   - POST /api/projects/{project_id}/deploy
+
+   Design patterns:
+   - Service pattern for export logic.
+   - Strategy pattern for deployment providers.
+
+   Status:
+   Planned. Not implemented in the current repo.
+
+8. Authentication and Dashboard
+   Goal:
+   Support user accounts and saved website projects.
+
+   Expected capabilities:
+   - User login
+   - User signup
+   - Website project management dashboard
+
+   Architecture notes:
+   - Authentication should protect saved projects.
+   - Dashboard should load projects from the backend.
+   - Project ownership should be enforced in the API.
+
+   API contract to design:
+   - POST /api/auth/signup
+   - POST /api/auth/login
+   - GET /api/projects
+
+   Design patterns:
+   - Repository pattern for users and projects.
+   - DTO/schema pattern for auth requests and responses.
+
+   Status:
+   Planned. Not implemented in the current repo.
+
+9. Prompt Optimization Engine
+   Goal:
+   Improve prompts before sending them to AI models.
+
+   Expected capabilities:
+   - Better UI generation prompts
+   - Template-based prompt workflows
+   - More consistent AI output
+
+   Architecture notes:
+   - This should run before layout, content, code, and image generation.
+   - Prompt templates should be reusable and versioned.
+   - Prompt output should be logged for debugging and improvement.
+
+   API contract to design:
+   - Internal service first.
+   - Optional later endpoint: POST /api/prompts/optimize
+
+   Design patterns:
+   - Template method for prompt workflows.
+   - Versioned prompt templates.
+
+   Status:
+   Planned. Not implemented in the current repo.
+
+10. AI Website Assistant Chatbot
+    Goal:
+    Let users modify generated websites through conversation.
+
+    Example commands:
+    - Change pricing section color to blue.
+    - Add testimonials section.
+
+    Architecture notes:
+    - Chatbot should receive the current project state and user instruction.
+    - It should return structured changes, not only text.
+    - Changes should create a new project version.
+
+    API contract to design:
+    - POST /api/projects/{project_id}/chat
+
+    Design patterns:
+    - Command pattern for edit instructions.
+    - Versioned project state for rollback and history.
+
+    Status:
+    Planned. Not implemented in the current repo.
+
+Advanced features for later
+1. Multi-page website generation
+2. AI logo generation
+3. AI chatbot website assistant
+4. Export to GitHub repository
+5. Drag-and-drop AI editing
+6. Voice-based website generation
+7. Template marketplace
+
+Suggested build order
+1. Confirm architecture and folder structure.
+2. Define data models and API contracts.
+3. Create backend foundation from scratch.
+4. Add health API.
+5. Add business requirement input API.
+6. Add prompt optimization service.
+7. Add AI website structure generation.
+8. Add AI content generation.
+9. Add theme generation.
+10. Add frontend foundation from scratch.
+11. Add live preview from structured website data.
+12. Add React code generation.
+13. Add project saving with database.
+14. Add authentication and dashboard.
+15. Add image generation.
+16. Add export workflow.
+17. Add deployment workflow.
+18. Add chatbot editing.
+
+Per-feature workflow
+1. Understand the feature.
+2. Write the goal in this document.
+3. Define user flow.
+4. Define backend API contract.
+5. Define data model changes.
+6. Define frontend screens/components.
+7. Define AI prompt workflow if needed.
+8. Implement only that feature.
+9. Test the feature.
+10. Update status in this document.
+
+Implemented local MVP slice
+Developed:
+- Backend: FastAPI app factory and API router.
+- Backend: standard success/error response shape.
+- Backend: request/response schemas for health and website generation.
+- Backend: deterministic website generator service.
+- Frontend: local UI for business requirements.
+- Frontend: generated website preview.
+- Frontend: structured JSON response tab.
+
+Current localhost endpoints:
+- UI: http://127.0.0.1:8000
+- API docs: http://127.0.0.1:8000/docs
+- Health: GET http://127.0.0.1:8000/api/health
+- Generate website: POST http://127.0.0.1:8000/api/websites/generate
+
+Current limitation:
+The generator does not call OpenAI yet. It intentionally returns deterministic
+structured data so the architecture, API contract, and frontend workflow can be
+tested before adding AI provider complexity.

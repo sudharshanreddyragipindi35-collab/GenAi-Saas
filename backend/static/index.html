@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI SaaS Website Builder</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Local MVP</p>
+        <h1>AI SaaS Website Builder</h1>
+      </div>
+      <div class="status-pill" id="api-status">Checking API</div>
+    </header>
+
+    <main class="workspace">
+      <section class="tool-panel" aria-labelledby="requirements-title">
+        <div class="panel-heading">
+          <h2 id="requirements-title">Business Requirements</h2>
+          <span class="step-label">Step 1</span>
+        </div>
+
+        <form id="requirements-form" class="form-grid">
+          <label>
+            <span>Business type</span>
+            <input
+              id="business-type"
+              name="business_type"
+              type="text"
+              value="AI automation agency"
+              required
+              minlength="2"
+              maxlength="80"
+            />
+          </label>
+
+          <label>
+            <span>Company name</span>
+            <input
+              id="company-name"
+              name="company_name"
+              type="text"
+              value="NovaFlow"
+              required
+              minlength="2"
+              maxlength="80"
+            />
+          </label>
+
+          <label>
+            <span>Color theme</span>
+            <select id="color-theme" name="color_theme">
+              <option value="Blue">Blue</option>
+              <option value="Green">Green</option>
+              <option value="Purple">Purple</option>
+              <option value="Red">Red</option>
+              <option value="Neutral">Neutral</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Target audience</span>
+            <input
+              id="target-audience"
+              name="target_audience"
+              type="text"
+              value="small business owners"
+              required
+              minlength="2"
+              maxlength="160"
+            />
+          </label>
+
+          <label class="full-width">
+            <span>Required features</span>
+            <textarea
+              id="required-features"
+              name="required_features"
+              rows="4"
+            >Lead capture, Services overview, Testimonials, Contact form</textarea>
+          </label>
+
+          <button class="primary-action" type="submit">
+            Generate Draft
+          </button>
+        </form>
+      </section>
+
+      <section class="result-panel" aria-labelledby="preview-title">
+        <div class="panel-heading">
+          <div>
+            <h2 id="preview-title">Generated Website Draft</h2>
+            <p id="project-id" class="muted">No draft generated yet</p>
+          </div>
+          <div class="tab-group" role="tablist" aria-label="Result view">
+            <button class="tab-button active" type="button" data-tab="preview">
+              Preview
+            </button>
+            <button class="tab-button" type="button" data-tab="json">
+              JSON
+            </button>
+          </div>
+        </div>
+
+        <div id="error-box" class="error-box" hidden></div>
+
+        <div id="preview-tab" class="tab-panel">
+          <div id="preview-root" class="preview-empty">
+            Submit the form to generate the first local website draft.
+          </div>
+        </div>
+
+        <div id="json-tab" class="tab-panel" hidden>
+          <pre id="json-output">{}</pre>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
