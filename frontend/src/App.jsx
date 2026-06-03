@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './App.css'
-import WebsitePreview from './components/WebsitePreview'
+import ResultViewer from './components/ResultViewer'
 import { generateWebsiteDraft } from './services/websiteApi'
 
 const featureOptions = [
@@ -182,40 +182,11 @@ function App() {
             <span className="step-number">02</span>
             <div>
               <p className="panel-label">Output</p>
-              <h2>Generated website preview</h2>
+              <h2>Generated website result</h2>
             </div>
           </div>
           {generatedDraft ? (
-            <div className="draft-summary">
-              <div className="summary-heading">
-                <div>
-                  <p className="panel-label">Draft ready</p>
-                  <h3>{generatedDraft.company_name}</h3>
-                </div>
-                <span className="project-id">{generatedDraft.project_id}</span>
-              </div>
-
-              <dl className="summary-grid">
-                <div>
-                  <dt>Business type</dt>
-                  <dd>{generatedDraft.business_type}</dd>
-                </div>
-                <div>
-                  <dt>Sections</dt>
-                  <dd>{generatedDraft.website_structure.sections.length}</dd>
-                </div>
-                <div>
-                  <dt>Theme</dt>
-                  <dd>{generatedDraft.theme.name}</dd>
-                </div>
-                <div>
-                  <dt>Generator</dt>
-                  <dd>{generatedDraft.prompt_trace.provider_mode}</dd>
-                </div>
-              </dl>
-
-              <WebsitePreview draft={generatedDraft} />
-            </div>
+            <ResultViewer key={generatedDraft.project_id} draft={generatedDraft} />
           ) : (
             <div className="preview-placeholder">
               <p>Submit business requirements to generate a website draft.</p>

@@ -1,0 +1,123 @@
+.result-viewer {
+  padding: 18px;
+}
+
+.summary-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.summary-heading h3 {
+  margin: 0;
+  color: #1d2939;
+  font-size: 20px;
+  letter-spacing: 0;
+}
+
+.project-id {
+  border: 1px solid #cfd7e3;
+  border-radius: 999px;
+  padding: 6px 9px;
+  color: #475467;
+  background: #f8fafc;
+  font-family: Consolas, monospace;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 18px;
+}
+
+.summary-grid div {
+  min-width: 0;
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  padding: 12px;
+  background: #f9fafb;
+}
+
+.summary-grid dt {
+  margin-bottom: 5px;
+  color: #667085;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.summary-grid dd {
+  overflow-wrap: anywhere;
+  margin: 0;
+  color: #1d2939;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.result-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.view-tabs {
+  display: inline-flex;
+  gap: 3px;
+  border: 1px solid #cfd7e3;
+  border-radius: 8px;
+  padding: 3px;
+  background: #f8fafc;
+}
+
+.view-tabs button {
+  border: 0;
+  border-radius: 6px;
+  padding: 7px 11px;
+  color: #475467;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.view-tabs button.active {
+  color: #1d2939;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(32, 33, 36, 0.12);
+}
+
+.view-tabs button:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.2);
+  outline-offset: 2px;
+}
+
+.json-response {
+  overflow: auto;
+  max-height: 680px;
+  margin: 0;
+  border: 1px solid #d9dee7;
+  border-radius: 8px;
+  padding: 14px;
+  color: #d1fae5;
+  background: #111827;
+  font-family: Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre;
+}
+
+@media (max-width: 560px) {
+  .summary-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
