@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './App.css'
+import { generateWebsiteDraft } from './services/websiteApi'
 
 const featureOptions = [
   'Lead capture',
@@ -18,7 +19,9 @@ function App() {
     targetAudience: '',
     requiredFeatures: ['Lead capture', 'Services overview', 'Contact form'],
   })
-  const [formStatus, setFormStatus] = useState('')
+  const [generatedDraft, setGeneratedDraft] = useState(null)
+  const [requestStatus, setRequestStatus] = useState('idle')
+  const [requestMessage, setRequestMessage] = useState('')
 
   function handleFieldChange(event) {
     const { name, value } = event.target
@@ -27,7 +30,7 @@ function App() {
       ...current,
       [name]: value,
     }))
-    setFormStatus('')
+    setRequestMessage('')
   }
 
   function handleFeatureChange(event) {
@@ -39,12 +42,24 @@ function App() {
         ? [...current.requiredFeatures, value]
         : current.requiredFeatures.filter((feature) => feature !== value),
     }))
-    setFormStatus('')
+    setRequestMessage('')
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
-    setFormStatus('Requirements are ready for website generation.')
+    setRequestStatus('loading')
+    setRequestMessage('')
+
+    try {
+      const draft = await generateWebsiteDraft(requirements)
+      setGeneratedDraft(draft)
+      setRequestStatus('success')
+      setRequestMessage('Website draft generated successfully.')
+    } catch (error) {
+      setGeneratedDraft(null)
+      setRequestStatus('error')
+      setRequestMessage(error.message)
+    }
   }
 
   return (
@@ -142,13 +157,20 @@ function App() {
               </div>
             </fieldset>
 
-            <button className="primary-action" type="submit">
-              Save requirements
+            <button
+              className="primary-action"
+              type="submit"
+              disabled={requestStatus === 'loading'}
+            >
+              {requestStatus === 'loading' ? 'Generating draft' : 'Generate draft'}
             </button>
 
-            {formStatus && (
-              <p className="form-status" role="status">
-                {formStatus}
+            {requestMessage && (
+              <p
+                className={`form-status ${requestStatus}`}
+                role={requestStatus === 'error' ? 'alert' : 'status'}
+              >
+                {requestMessage}
               </p>
             )}
           </form>
@@ -162,9 +184,47 @@ function App() {
               <h2>Generated website preview</h2>
             </div>
           </div>
-          <div className="preview-placeholder">
-            <p>Website preview will appear here after backend connection.</p>
-          </div>
+          {generatedDraft ? (
+            <div className="draft-summary">
+              <div className="summary-heading">
+                <div>
+                  <p className="panel-label">Draft ready</p>
+                  <h3>{generatedDraft.company_name}</h3>
+                </div>
+                <span className="project-id">{generatedDraft.project_id}</span>
+              </div>
+
+              <dl className="summary-grid">
+                <div>
+                  <dt>Business type</dt>
+                  <dd>{generatedDraft.business_type}</dd>
+                </div>
+                <div>
+                  <dt>Sections</dt>
+                  <dd>{generatedDraft.website_structure.sections.length}</dd>
+                </div>
+                <div>
+                  <dt>Theme</dt>
+                  <dd>{generatedDraft.theme.name}</dd>
+                </div>
+                <div>
+                  <dt>Generator</dt>
+                  <dd>{generatedDraft.prompt_trace.provider_mode}</dd>
+                </div>
+              </dl>
+
+              <div className="preview-placeholder ready">
+                <p>
+                  Backend connection is working. The visual website renderer will
+                  be added in a later update.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="preview-placeholder">
+              <p>Submit business requirements to generate a website draft.</p>
+            </div>
+          )}
         </section>
       </main>
     </div>
