@@ -82,6 +82,136 @@
   font-weight: 800;
 }
 
+.requirements-form {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+}
+
+.form-field {
+  display: grid;
+  gap: 7px;
+  color: #344054;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.form-field input,
+.form-field select {
+  width: 100%;
+  border: 1px solid #cfd7e3;
+  border-radius: 8px;
+  padding: 11px 12px;
+  color: #1d2939;
+  background: #ffffff;
+  font: inherit;
+  font-weight: 400;
+}
+
+.form-field input::placeholder {
+  color: #98a2b3;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+  outline: 3px solid rgba(37, 99, 235, 0.16);
+  border-color: #2563eb;
+}
+
+.feature-fieldset {
+  min-width: 0;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+.feature-fieldset legend {
+  margin-bottom: 9px;
+  color: #344054;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.feature-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.feature-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  padding: 9px 10px;
+  color: #475467;
+  background: #f9fafb;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.feature-option:has(input:checked) {
+  border-color: #9db8f5;
+  color: #1d4ed8;
+  background: #eff4ff;
+}
+
+.feature-option input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #2563eb;
+}
+
+.primary-action {
+  border: 0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  color: #ffffff;
+  background: #2563eb;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.primary-action:hover {
+  background: #1d4ed8;
+}
+
+.primary-action:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.24);
+  outline-offset: 2px;
+}
+
+.form-status {
+  margin: 0;
+  border: 1px solid #a6d9bb;
+  border-radius: 8px;
+  padding: 10px 11px;
+  color: #17663a;
+  background: #edf8f1;
+  font-size: 13px;
+}
+
+.preview-placeholder {
+  min-height: 360px;
+  display: grid;
+  place-items: center;
+  margin: 18px;
+  border: 1px dashed #cfd7e3;
+  border-radius: 8px;
+  padding: 24px;
+  color: #667085;
+  background: #fafbfc;
+  text-align: center;
+}
+
+.preview-placeholder p {
+  margin: 0;
+}
+
 @media (max-width: 820px) {
   .builder-workspace {
     grid-template-columns: 1fr;
@@ -97,5 +227,9 @@
 
   .builder-workspace {
     padding: 10px;
+  }
+
+  .feature-options {
+    grid-template-columns: 1fr;
   }
 }
