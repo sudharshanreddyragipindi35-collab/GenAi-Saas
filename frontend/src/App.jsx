@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './App.css'
+import WebsitePreview from './components/WebsitePreview'
 import { generateWebsiteDraft } from './services/websiteApi'
 
 const featureOptions = [
@@ -213,12 +214,7 @@ function App() {
                 </div>
               </dl>
 
-              <div className="preview-placeholder ready">
-                <p>
-                  Backend connection is working. The visual website renderer will
-                  be added in a later update.
-                </p>
-              </div>
+              <WebsitePreview draft={generatedDraft} />
             </div>
           ) : (
             <div className="preview-placeholder">

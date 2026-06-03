@@ -279,17 +279,6 @@
   text-align: center;
 }
 
-.draft-summary .preview-placeholder {
-  margin: 0;
-}
-
-.preview-placeholder.ready {
-  min-height: 220px;
-  border-color: #a6d9bb;
-  color: #17663a;
-  background: #f4fbf6;
-}
-
 .preview-placeholder p {
   margin: 0;
 }
