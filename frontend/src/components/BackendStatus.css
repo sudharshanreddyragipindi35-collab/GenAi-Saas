@@ -1,0 +1,40 @@
+.backend-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #cfd7e3;
+  border-radius: 999px;
+  padding: 7px 11px;
+  color: #475467;
+  background: #f8fafc;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #98a2b3;
+}
+
+.backend-status.online {
+  border-color: #a6d9bb;
+  color: #17663a;
+  background: #edf8f1;
+}
+
+.backend-status.online .status-dot {
+  background: #22a35a;
+}
+
+.backend-status.offline {
+  border-color: #f1a7a7;
+  color: #8a2525;
+  background: #fff1f1;
+}
+
+.backend-status.offline .status-dot {
+  background: #d64545;
+}

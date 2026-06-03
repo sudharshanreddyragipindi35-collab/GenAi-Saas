@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
+import BackendStatus from './components/BackendStatus'
 import ResultViewer from './components/ResultViewer'
+import { getBackendHealth } from './services/systemApi'
 import { generateWebsiteDraft } from './services/websiteApi'
 
 const featureOptions = [
@@ -23,6 +25,29 @@ function App() {
   const [generatedDraft, setGeneratedDraft] = useState(null)
   const [requestStatus, setRequestStatus] = useState('idle')
   const [requestMessage, setRequestMessage] = useState('')
+  const [backendHealth, setBackendHealth] = useState({
+    status: 'checking',
+    mode: '',
+  })
+
+  useEffect(() => {
+    const controller = new AbortController()
+
+    async function loadBackendHealth() {
+      try {
+        const health = await getBackendHealth({ signal: controller.signal })
+        setBackendHealth({ status: 'online', mode: health.mode })
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          setBackendHealth({ status: 'offline', mode: '' })
+        }
+      }
+    }
+
+    loadBackendHealth()
+
+    return () => controller.abort()
+  }, [])
 
   function handleFieldChange(event) {
     const { name, value } = event.target
@@ -70,7 +95,13 @@ function App() {
           <p className="product-label">GenAI SaaS</p>
           <h1>Website Builder</h1>
         </div>
-        <span className="environment-badge">Local development</span>
+        <div className="app-header-actions">
+          <span className="environment-badge">Local development</span>
+          <BackendStatus
+            mode={backendHealth.mode}
+            status={backendHealth.status}
+          />
+        </div>
       </header>
 
       <main className="builder-workspace">
