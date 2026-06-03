@@ -2,26 +2,17 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import BackendStatus from './components/BackendStatus'
 import ResultViewer from './components/ResultViewer'
+import {
+  blankRequirements,
+  featureOptions,
+  requirementPresets,
+} from './data/requirementPresets'
 import { getBackendHealth } from './services/systemApi'
 import { generateWebsiteDraft } from './services/websiteApi'
 
-const featureOptions = [
-  'Lead capture',
-  'Services overview',
-  'Pricing',
-  'Testimonials',
-  'Contact form',
-  'FAQ',
-]
-
 function App() {
-  const [requirements, setRequirements] = useState({
-    businessType: '',
-    companyName: '',
-    colorTheme: 'Blue',
-    targetAudience: '',
-    requiredFeatures: ['Lead capture', 'Services overview', 'Contact form'],
-  })
+  const [requirements, setRequirements] = useState(blankRequirements)
+  const [selectedPreset, setSelectedPreset] = useState('')
   const [generatedDraft, setGeneratedDraft] = useState(null)
   const [requestStatus, setRequestStatus] = useState('idle')
   const [requestMessage, setRequestMessage] = useState('')
@@ -56,6 +47,7 @@ function App() {
       ...current,
       [name]: value,
     }))
+    setSelectedPreset('')
     setRequestMessage('')
   }
 
@@ -68,6 +60,17 @@ function App() {
         ? [...current.requiredFeatures, value]
         : current.requiredFeatures.filter((feature) => feature !== value),
     }))
+    setSelectedPreset('')
+    setRequestMessage('')
+  }
+
+  function handlePresetChange(event) {
+    const presetId = event.target.value
+    const preset = requirementPresets.find((item) => item.id === presetId)
+
+    setSelectedPreset(presetId)
+    setRequirements(preset ? preset.requirements : blankRequirements)
+    setRequestStatus('idle')
     setRequestMessage('')
   }
 
@@ -115,6 +118,19 @@ function App() {
           </div>
 
           <form className="requirements-form" onSubmit={handleSubmit}>
+            <label className="form-field preset-field">
+              <span>Example preset</span>
+              <select value={selectedPreset} onChange={handlePresetChange}>
+                <option value="">Start blank</option>
+                {requirementPresets.map((preset) => (
+                  <option key={preset.id} value={preset.id}>
+                    {preset.label}
+                  </option>
+                ))}
+              </select>
+              <small>Choose a sample or enter your own requirements.</small>
+            </label>
+
             <label className="form-field">
               <span>Business type</span>
               <input
