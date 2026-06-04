@@ -4,6 +4,42 @@ import WebsitePreview from './WebsitePreview'
 
 function ResultViewer({ draft }) {
   const [activeView, setActiveView] = useState('preview')
+  const [copyStatus, setCopyStatus] = useState('idle')
+  const formattedJson = JSON.stringify(draft, null, 2)
+
+  function copyWithFallback(text) {
+    const textArea = document.createElement('textarea')
+    textArea.value = text
+    textArea.setAttribute('readonly', '')
+    textArea.style.position = 'fixed'
+    textArea.style.top = '-9999px'
+    document.body.appendChild(textArea)
+    textArea.select()
+    const copied = document.execCommand('copy')
+    document.body.removeChild(textArea)
+
+    if (!copied) {
+      throw new Error('Copy command failed.')
+    }
+  }
+
+  async function handleCopyJson() {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(formattedJson)
+      } else {
+        copyWithFallback(formattedJson)
+      }
+      setCopyStatus('copied')
+    } catch {
+      setCopyStatus('error')
+    }
+  }
+
+  function handleViewChange(view) {
+    setActiveView(view)
+    setCopyStatus('idle')
+  }
 
   return (
     <div className="result-viewer">
@@ -41,7 +77,7 @@ function ResultViewer({ draft }) {
             role="tab"
             aria-selected={activeView === 'preview'}
             className={activeView === 'preview' ? 'active' : ''}
-            onClick={() => setActiveView('preview')}
+            onClick={() => handleViewChange('preview')}
           >
             Preview
           </button>
@@ -50,7 +86,7 @@ function ResultViewer({ draft }) {
             role="tab"
             aria-selected={activeView === 'json'}
             className={activeView === 'json' ? 'active' : ''}
-            onClick={() => setActiveView('json')}
+            onClick={() => handleViewChange('json')}
           >
             JSON
           </button>
@@ -63,7 +99,19 @@ function ResultViewer({ draft }) {
         </div>
       ) : (
         <div role="tabpanel" aria-label="JSON response">
-          <pre className="json-response">{JSON.stringify(draft, null, 2)}</pre>
+          <div className="json-toolbar">
+            <span>
+              {copyStatus === 'copied'
+                ? 'Copied JSON'
+                : copyStatus === 'error'
+                  ? 'Copy failed'
+                  : 'Structured response'}
+            </span>
+            <button type="button" onClick={handleCopyJson}>
+              Copy JSON
+            </button>
+          </div>
+          <pre className="json-response">{formattedJson}</pre>
         </div>
       )}
     </div>
