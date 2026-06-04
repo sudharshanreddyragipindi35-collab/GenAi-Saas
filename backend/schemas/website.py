@@ -6,12 +6,30 @@ from pydantic import BaseModel, Field
 class HealthStatus(BaseModel):
     service: str
     mode: str
+    ai_provider: str
+    ai_enabled: bool
+    model: str
 
 
 class HealthEnvelope(BaseModel):
     status: Literal["success"]
     message: str
     data: HealthStatus
+
+
+class AiConfigStatus(BaseModel):
+    active_provider: str
+    configured_provider: str
+    api_key_configured: bool
+    model: str
+    rag_enabled: bool
+    prompt_template_version: str
+
+
+class AiConfigEnvelope(BaseModel):
+    status: Literal["success"]
+    message: str
+    data: AiConfigStatus
 
 
 class WebsiteGenerationRequest(BaseModel):
@@ -88,3 +106,26 @@ class WebsiteGenerationEnvelope(BaseModel):
     status: Literal["success"]
     message: str
     data: WebsiteDraft
+
+
+class RagContextItem(BaseModel):
+    id: str
+    title: str
+    category: str
+    content: str
+    score: int
+
+
+class PromptPreview(BaseModel):
+    provider: str
+    model: str
+    template_version: str
+    system_prompt: str
+    user_prompt: str
+    rag_context: List[RagContextItem]
+
+
+class PromptPreviewEnvelope(BaseModel):
+    status: Literal["success"]
+    message: str
+    data: PromptPreview

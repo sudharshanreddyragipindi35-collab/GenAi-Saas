@@ -60,7 +60,10 @@ class WebsiteGeneratorService:
             metadata={
                 "required_features": features,
                 "ai_enabled": False,
-                "note": "This is a local MVP generator. OpenAI integration comes later.",
+                "provider": "deterministic-local",
+                "rag_enabled": False,
+                "rag_sources": [],
+                "note": "This is a local fallback generator. Claude integration is used when configured.",
             },
         )
 

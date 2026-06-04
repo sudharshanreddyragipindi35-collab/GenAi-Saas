@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import AiGenerationPanel from './components/AiGenerationPanel'
 import BackendStatus from './components/BackendStatus'
 import DraftHistory from './components/DraftHistory'
 import ResultViewer from './components/ResultViewer'
@@ -9,7 +10,7 @@ import {
   featureOptions,
   requirementPresets,
 } from './data/requirementPresets'
-import { getBackendHealth } from './services/systemApi'
+import { getAiConfig, getBackendHealth, previewAiPrompt } from './services/systemApi'
 import { generateWebsiteDraft } from './services/websiteApi'
 import {
   clearDraftHistory,
@@ -30,7 +31,12 @@ function App() {
   const [backendHealth, setBackendHealth] = useState({
     status: 'checking',
     mode: '',
+    model: '',
   })
+  const [aiConfig, setAiConfig] = useState(null)
+  const [promptPreview, setPromptPreview] = useState(null)
+  const [promptPreviewStatus, setPromptPreviewStatus] = useState('idle')
+  const [promptPreviewMessage, setPromptPreviewMessage] = useState('')
   const hasValidationErrors = Object.keys(validationErrors).length > 0
   const selectedFeatureCount = requirements.requiredFeatures.length
   const requirementChecklist = [
@@ -69,15 +75,31 @@ function App() {
     async function loadBackendHealth() {
       try {
         const health = await getBackendHealth({ signal: controller.signal })
-        setBackendHealth({ status: 'online', mode: health.mode })
+        setBackendHealth({
+          status: 'online',
+          mode: health.mode,
+          model: health.model,
+        })
       } catch (error) {
         if (error.name !== 'AbortError') {
-          setBackendHealth({ status: 'offline', mode: '' })
+          setBackendHealth({ status: 'offline', mode: '', model: '' })
+        }
+      }
+    }
+
+    async function loadAiConfig() {
+      try {
+        const config = await getAiConfig({ signal: controller.signal })
+        setAiConfig(config)
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          setAiConfig(null)
         }
       }
     }
 
     loadBackendHealth()
+    loadAiConfig()
 
     return () => controller.abort()
   }, [])
@@ -92,6 +114,7 @@ function App() {
     setValidationErrors((current) => ({ ...current, [name]: '' }))
     setSelectedPreset('')
     setRequestMessage('')
+    setPromptPreviewMessage('')
   }
 
   function handleFeatureChange(event) {
@@ -106,6 +129,7 @@ function App() {
     setValidationErrors((current) => ({ ...current, requiredFeatures: '' }))
     setSelectedPreset('')
     setRequestMessage('')
+    setPromptPreviewMessage('')
   }
 
   function handlePresetChange(event) {
@@ -117,6 +141,8 @@ function App() {
     setValidationErrors({})
     setRequestStatus('idle')
     setRequestMessage('')
+    setPromptPreview(null)
+    setPromptPreviewMessage('')
   }
 
   function handleResetForm() {
@@ -125,6 +151,8 @@ function App() {
     setValidationErrors({})
     setRequestStatus('idle')
     setRequestMessage('')
+    setPromptPreview(null)
+    setPromptPreviewMessage('')
   }
 
   function handleClearResult() {
@@ -192,6 +220,32 @@ function App() {
     await generateDraft()
   }
 
+  async function handlePreviewPrompt() {
+    const errors = validateRequirements(requirements)
+
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors)
+      setPromptPreviewStatus('error')
+      setPromptPreviewMessage('Complete the required fields before previewing.')
+      return
+    }
+
+    setValidationErrors({})
+    setPromptPreviewStatus('loading')
+    setPromptPreviewMessage('')
+
+    try {
+      const preview = await previewAiPrompt(requirements)
+      setPromptPreview(preview)
+      setPromptPreviewStatus('success')
+      setPromptPreviewMessage('Prompt and RAG context ready.')
+    } catch (error) {
+      setPromptPreview(null)
+      setPromptPreviewStatus('error')
+      setPromptPreviewMessage(error.message)
+    }
+  }
+
   return (
     <div className="app-shell">
       <header className="app-header">
@@ -203,6 +257,7 @@ function App() {
           <span className="environment-badge">Local development</span>
           <BackendStatus
             mode={backendHealth.mode}
+            model={backendHealth.model}
             status={backendHealth.status}
           />
         </div>
@@ -256,6 +311,14 @@ function App() {
                 ))}
               </div>
             </div>
+
+            <AiGenerationPanel
+              aiConfig={aiConfig}
+              onPreviewPrompt={handlePreviewPrompt}
+              promptPreview={promptPreview}
+              promptPreviewMessage={promptPreviewMessage}
+              promptPreviewStatus={promptPreviewStatus}
+            />
 
             <label className="form-field">
               <span>Business type</span>

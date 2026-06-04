@@ -12,6 +12,7 @@ function ResultViewer({ draft }) {
   const structureSections = draft.website_structure.sections
   const sectionCount = structureSections.length
   const requestedFeatures = draft.metadata?.required_features || []
+  const ragSources = draft.metadata?.rag_sources || []
   const themePalette = Object.entries(draft.theme.palette)
   const themeDetails = [
     {
@@ -345,6 +346,18 @@ function ResultViewer({ draft }) {
             <article className="trace-summary">
               <span>Generator note</span>
               <p>{draft.metadata.note}</p>
+            </article>
+          )}
+          {ragSources.length > 0 && (
+            <article className="trace-summary">
+              <span>RAG sources</span>
+              <div className="trace-rag-list">
+                {ragSources.map((source) => (
+                  <p key={source.id}>
+                    {source.title} / {source.category} / score {source.score}
+                  </p>
+                ))}
+              </div>
             </article>
           )}
         </div>

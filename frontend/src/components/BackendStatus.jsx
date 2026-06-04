@@ -6,9 +6,12 @@ const statusLabels = {
   offline: 'Backend offline',
 }
 
-function BackendStatus({ mode, status }) {
+function BackendStatus({ mode, model, status }) {
   const label = statusLabels[status]
-  const detail = status === 'online' && mode ? mode : label
+  const detail =
+    status === 'online' && mode
+      ? [mode, model].filter(Boolean).join(' / ')
+      : label
 
   return (
     <span
