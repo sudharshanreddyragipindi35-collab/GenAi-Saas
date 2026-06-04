@@ -14,9 +14,16 @@ function buildThemeStyles(theme) {
   }
 }
 
+function getPreviewSectionId(sectionId) {
+  return `preview-section-${sectionId}`
+}
+
 function PreviewSection({ section }) {
   return (
-    <section className={`generated-section section-${section.section_id}`}>
+    <section
+      className={`generated-section section-${section.section_id}`}
+      id={getPreviewSectionId(section.section_id)}
+    >
       <div className="section-copy">
         <p className="section-kicker">{section.section_id}</p>
         <h4>{section.heading}</h4>
@@ -46,9 +53,14 @@ function WebsitePreview({ draft }) {
     <div className="website-preview" style={buildThemeStyles(theme)}>
       <nav className="generated-navigation">
         <strong>{draft.company_name}</strong>
-        <div>
-          {previewData.navigation.map((item) => (
-            <span key={item}>{item}</span>
+        <div className="generated-navigation-links">
+          {previewData.sections.map((section, index) => (
+            <a
+              href={`#${getPreviewSectionId(section.section_id)}`}
+              key={section.section_id}
+            >
+              {previewData.navigation[index] || section.section_id}
+            </a>
           ))}
         </div>
       </nav>

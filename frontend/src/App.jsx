@@ -32,6 +32,30 @@ function App() {
   })
   const hasValidationErrors = Object.keys(validationErrors).length > 0
   const selectedFeatureCount = requirements.requiredFeatures.length
+  const requirementChecklist = [
+    {
+      label: 'Business type',
+      complete: requirements.businessType.trim().length >= 2,
+    },
+    {
+      label: 'Company',
+      complete: requirements.companyName.trim().length >= 2,
+    },
+    {
+      label: 'Audience',
+      complete: requirements.targetAudience.trim().length >= 2,
+    },
+    {
+      label: 'Features',
+      complete: selectedFeatureCount > 0,
+    },
+  ]
+  const completedRequirementCount = requirementChecklist.filter(
+    (item) => item.complete,
+  ).length
+  const requirementProgress = Math.round(
+    (completedRequirementCount / requirementChecklist.length) * 100,
+  )
   const showGenerationError =
     requestStatus === 'error' &&
     requestMessage &&
@@ -196,6 +220,31 @@ function App() {
               </select>
               <small>Choose a sample or enter your own requirements.</small>
             </label>
+
+            <div
+              className="requirements-readiness"
+              aria-label="Requirement completion"
+            >
+              <div className="readiness-copy">
+                <span>
+                  {completedRequirementCount} of {requirementChecklist.length} ready
+                </span>
+                <strong>{requirementProgress}% complete</strong>
+              </div>
+              <div className="readiness-meter" aria-hidden="true">
+                <span style={{ width: `${requirementProgress}%` }} />
+              </div>
+              <div className="readiness-checks">
+                {requirementChecklist.map((item) => (
+                  <span
+                    className={item.complete ? 'complete' : ''}
+                    key={item.label}
+                  >
+                    {item.label}
+                  </span>
+                ))}
+              </div>
+            </div>
 
             <label className="form-field">
               <span>Business type</span>

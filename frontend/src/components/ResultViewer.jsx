@@ -10,6 +10,20 @@ function ResultViewer({ draft }) {
   const formattedJson = JSON.stringify(draft, null, 2)
   const sectionCount = draft.website_structure.sections.length
   const requestedFeatures = draft.metadata?.required_features || []
+  const seoDetails = [
+    {
+      label: 'SEO title',
+      value: draft.generated_content.seo_title,
+    },
+    {
+      label: 'SEO description',
+      value: draft.generated_content.seo_description,
+    },
+    {
+      label: 'Tagline',
+      value: draft.generated_content.tagline,
+    },
+  ]
 
   function copyWithFallback(text) {
     const textArea = document.createElement('textarea')
@@ -141,6 +155,15 @@ function ResultViewer({ draft }) {
           >
             JSON
           </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeView === 'seo'}
+            className={activeView === 'seo' ? 'active' : ''}
+            onClick={() => handleViewChange('seo')}
+          >
+            SEO
+          </button>
         </div>
       </div>
 
@@ -148,7 +171,7 @@ function ResultViewer({ draft }) {
         <div role="tabpanel" aria-label="Website preview">
           <WebsitePreview draft={draft} />
         </div>
-      ) : (
+      ) : activeView === 'json' ? (
         <div role="tabpanel" aria-label="JSON response">
           <div className="json-toolbar">
             <span>{getJsonToolbarStatus()}</span>
@@ -162,6 +185,15 @@ function ResultViewer({ draft }) {
             </div>
           </div>
           <pre className="json-response">{formattedJson}</pre>
+        </div>
+      ) : (
+        <div className="seo-panel" role="tabpanel" aria-label="SEO content">
+          {seoDetails.map((item) => (
+            <article className="seo-detail" key={item.label}>
+              <span>{item.label}</span>
+              <p>{item.value}</p>
+            </article>
+          ))}
         </div>
       )}
     </div>
