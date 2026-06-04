@@ -18,14 +18,23 @@ function getPreviewSectionId(sectionId) {
   return `preview-section-${sectionId}`
 }
 
-function PreviewSection({ section }) {
+function formatSectionNumber(index) {
+  return String(index + 1).padStart(2, '0')
+}
+
+function PreviewSection({ section, sectionCount, sectionIndex }) {
   return (
     <section
       className={`generated-section section-${section.section_id}`}
       id={getPreviewSectionId(section.section_id)}
     >
       <div className="section-copy">
-        <p className="section-kicker">{section.section_id}</p>
+        <div className="section-meta-row">
+          <p className="section-kicker">{section.section_id}</p>
+          <span>
+            {formatSectionNumber(sectionIndex)} / {sectionCount}
+          </span>
+        </div>
         <h4>{section.heading}</h4>
         <p>{section.body}</p>
         {section.cta_label && (
@@ -37,6 +46,9 @@ function PreviewSection({ section }) {
 
       {section.bullets.length > 0 && (
         <ul className="section-items">
+          <li className="section-items-summary">
+            {section.bullets.length} content items
+          </li>
           {section.bullets.map((item) => (
             <li key={item}>{item}</li>
           ))}
@@ -66,8 +78,13 @@ function WebsitePreview({ draft }) {
       </nav>
 
       <div className="generated-page">
-        {previewData.sections.map((section) => (
-          <PreviewSection key={section.section_id} section={section} />
+        {previewData.sections.map((section, index) => (
+          <PreviewSection
+            key={section.section_id}
+            section={section}
+            sectionCount={previewData.sections.length}
+            sectionIndex={index}
+          />
         ))}
       </div>
     </div>

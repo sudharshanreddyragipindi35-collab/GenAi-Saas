@@ -5,11 +5,32 @@ import { downloadDraftJson } from '../utils/downloadDraftJson'
 
 function ResultViewer({ draft }) {
   const [activeView, setActiveView] = useState('preview')
+  const [previewViewport, setPreviewViewport] = useState('desktop')
   const [copyStatus, setCopyStatus] = useState('idle')
   const [downloadStatus, setDownloadStatus] = useState('idle')
   const formattedJson = JSON.stringify(draft, null, 2)
-  const sectionCount = draft.website_structure.sections.length
+  const structureSections = draft.website_structure.sections
+  const sectionCount = structureSections.length
   const requestedFeatures = draft.metadata?.required_features || []
+  const themePalette = Object.entries(draft.theme.palette)
+  const themeDetails = [
+    {
+      label: 'Heading font',
+      value: draft.theme.fonts.heading,
+    },
+    {
+      label: 'Body font',
+      value: draft.theme.fonts.body,
+    },
+    {
+      label: 'Radius',
+      value: draft.theme.radius,
+    },
+    {
+      label: 'Spacing',
+      value: draft.theme.spacing,
+    },
+  ]
   const seoDetails = [
     {
       label: 'SEO title',
@@ -22,6 +43,20 @@ function ResultViewer({ draft }) {
     {
       label: 'Tagline',
       value: draft.generated_content.tagline,
+    },
+  ]
+  const traceDetails = [
+    {
+      label: 'Provider mode',
+      value: draft.prompt_trace.provider_mode,
+    },
+    {
+      label: 'Template version',
+      value: draft.prompt_trace.template_version,
+    },
+    {
+      label: 'AI enabled',
+      value: draft.metadata?.ai_enabled ? 'Yes' : 'No',
     },
   ]
 
@@ -158,18 +193,63 @@ function ResultViewer({ draft }) {
           <button
             type="button"
             role="tab"
+            aria-selected={activeView === 'outline'}
+            className={activeView === 'outline' ? 'active' : ''}
+            onClick={() => handleViewChange('outline')}
+          >
+            Outline
+          </button>
+          <button
+            type="button"
+            role="tab"
             aria-selected={activeView === 'seo'}
             className={activeView === 'seo' ? 'active' : ''}
             onClick={() => handleViewChange('seo')}
           >
             SEO
           </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeView === 'theme'}
+            className={activeView === 'theme' ? 'active' : ''}
+            onClick={() => handleViewChange('theme')}
+          >
+            Theme
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeView === 'trace'}
+            className={activeView === 'trace' ? 'active' : ''}
+            onClick={() => handleViewChange('trace')}
+          >
+            Trace
+          </button>
         </div>
       </div>
 
       {activeView === 'preview' ? (
         <div role="tabpanel" aria-label="Website preview">
-          <WebsitePreview draft={draft} />
+          <div className="preview-viewport-toolbar" aria-label="Preview viewport">
+            <button
+              type="button"
+              className={previewViewport === 'desktop' ? 'active' : ''}
+              onClick={() => setPreviewViewport('desktop')}
+            >
+              Desktop
+            </button>
+            <button
+              type="button"
+              className={previewViewport === 'mobile' ? 'active' : ''}
+              onClick={() => setPreviewViewport('mobile')}
+            >
+              Mobile
+            </button>
+          </div>
+          <div className={`preview-viewport-frame ${previewViewport}`}>
+            <WebsitePreview draft={draft} />
+          </div>
         </div>
       ) : activeView === 'json' ? (
         <div role="tabpanel" aria-label="JSON response">
@@ -186,7 +266,29 @@ function ResultViewer({ draft }) {
           </div>
           <pre className="json-response">{formattedJson}</pre>
         </div>
-      ) : (
+      ) : activeView === 'outline' ? (
+        <div className="outline-panel" role="tabpanel" aria-label="Page outline">
+          {structureSections.map((section, index) => (
+            <article className="outline-card" key={section.id}>
+              <div className="outline-card-heading">
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                <div>
+                  <h4>{section.name}</h4>
+                  <p>{section.purpose}</p>
+                </div>
+              </div>
+              <div className="outline-chip-row" aria-label={`${section.name} parts`}>
+                {section.components.map((component) => (
+                  <span key={component}>{component}</span>
+                ))}
+              </div>
+              <div className="outline-fields">
+                Fields: {section.content_fields.join(', ')}
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : activeView === 'seo' ? (
         <div className="seo-panel" role="tabpanel" aria-label="SEO content">
           {seoDetails.map((item) => (
             <article className="seo-detail" key={item.label}>
@@ -194,6 +296,57 @@ function ResultViewer({ draft }) {
               <p>{item.value}</p>
             </article>
           ))}
+        </div>
+      ) : activeView === 'theme' ? (
+        <div className="theme-panel" role="tabpanel" aria-label="Theme tokens">
+          <div className="theme-swatch-grid">
+            {themePalette.map(([name, value]) => (
+              <article className="theme-swatch" key={name}>
+                <span
+                  className="swatch-sample"
+                  style={{ backgroundColor: value }}
+                />
+                <div>
+                  <strong>{name}</strong>
+                  <code>{value}</code>
+                </div>
+              </article>
+            ))}
+          </div>
+          <div className="theme-detail-grid">
+            {themeDetails.map((item) => (
+              <article className="seo-detail" key={item.label}>
+                <span>{item.label}</span>
+                <p>{item.value}</p>
+              </article>
+            ))}
+          </div>
+          <div className="theme-mood-row" aria-label="Theme mood">
+            {draft.theme.mood.map((mood) => (
+              <span key={mood}>{mood}</span>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="trace-panel" role="tabpanel" aria-label="Prompt trace">
+          <div className="trace-detail-grid">
+            {traceDetails.map((item) => (
+              <article className="seo-detail" key={item.label}>
+                <span>{item.label}</span>
+                <p>{item.value}</p>
+              </article>
+            ))}
+          </div>
+          <article className="trace-summary">
+            <span>Prompt summary</span>
+            <p>{draft.prompt_trace.optimized_prompt_summary}</p>
+          </article>
+          {draft.metadata?.note && (
+            <article className="trace-summary">
+              <span>Generator note</span>
+              <p>{draft.metadata.note}</p>
+            </article>
+          )}
         </div>
       )}
     </div>
