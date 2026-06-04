@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import './ResultViewer.css'
 import WebsitePreview from './WebsitePreview'
+import { downloadDraftJson } from '../utils/downloadDraftJson'
 
 function ResultViewer({ draft }) {
   const [activeView, setActiveView] = useState('preview')
   const [copyStatus, setCopyStatus] = useState('idle')
+  const [downloadStatus, setDownloadStatus] = useState('idle')
   const formattedJson = JSON.stringify(draft, null, 2)
 
   function copyWithFallback(text) {
@@ -36,9 +38,39 @@ function ResultViewer({ draft }) {
     }
   }
 
+  function handleDownloadJson() {
+    try {
+      downloadDraftJson(draft, formattedJson)
+      setDownloadStatus('downloaded')
+    } catch {
+      setDownloadStatus('error')
+    }
+  }
+
   function handleViewChange(view) {
     setActiveView(view)
     setCopyStatus('idle')
+    setDownloadStatus('idle')
+  }
+
+  function getJsonToolbarStatus() {
+    if (downloadStatus === 'downloaded') {
+      return 'Downloaded JSON'
+    }
+
+    if (downloadStatus === 'error') {
+      return 'Download failed'
+    }
+
+    if (copyStatus === 'copied') {
+      return 'Copied JSON'
+    }
+
+    if (copyStatus === 'error') {
+      return 'Copy failed'
+    }
+
+    return 'Structured response'
   }
 
   return (
@@ -100,16 +132,15 @@ function ResultViewer({ draft }) {
       ) : (
         <div role="tabpanel" aria-label="JSON response">
           <div className="json-toolbar">
-            <span>
-              {copyStatus === 'copied'
-                ? 'Copied JSON'
-                : copyStatus === 'error'
-                  ? 'Copy failed'
-                  : 'Structured response'}
-            </span>
-            <button type="button" onClick={handleCopyJson}>
-              Copy JSON
-            </button>
+            <span>{getJsonToolbarStatus()}</span>
+            <div className="json-toolbar-actions">
+              <button type="button" onClick={handleCopyJson}>
+                Copy JSON
+              </button>
+              <button type="button" onClick={handleDownloadJson}>
+                Download JSON
+              </button>
+            </div>
           </div>
           <pre className="json-response">{formattedJson}</pre>
         </div>
