@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import BackendStatus from './components/BackendStatus'
 import ResultViewer from './components/ResultViewer'
+import ResultSkeleton from './components/ResultSkeleton'
 import {
   blankRequirements,
   featureOptions,
@@ -91,6 +92,7 @@ function App() {
     }
 
     setValidationErrors({})
+    setGeneratedDraft(null)
     setRequestStatus('loading')
     setRequestMessage('')
 
@@ -290,7 +292,9 @@ function App() {
               <h2>Generated website result</h2>
             </div>
           </div>
-          {generatedDraft ? (
+          {requestStatus === 'loading' ? (
+            <ResultSkeleton />
+          ) : generatedDraft ? (
             <ResultViewer key={generatedDraft.project_id} draft={generatedDraft} />
           ) : (
             <div className="preview-placeholder">
