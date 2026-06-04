@@ -9,6 +9,7 @@ import {
 } from './data/requirementPresets'
 import { getBackendHealth } from './services/systemApi'
 import { generateWebsiteDraft } from './services/websiteApi'
+import { validateRequirements } from './utils/validateRequirements'
 
 function App() {
   const [requirements, setRequirements] = useState(blankRequirements)
@@ -16,6 +17,7 @@ function App() {
   const [generatedDraft, setGeneratedDraft] = useState(null)
   const [requestStatus, setRequestStatus] = useState('idle')
   const [requestMessage, setRequestMessage] = useState('')
+  const [validationErrors, setValidationErrors] = useState({})
   const [backendHealth, setBackendHealth] = useState({
     status: 'checking',
     mode: '',
@@ -47,6 +49,7 @@ function App() {
       ...current,
       [name]: value,
     }))
+    setValidationErrors((current) => ({ ...current, [name]: '' }))
     setSelectedPreset('')
     setRequestMessage('')
   }
@@ -60,6 +63,7 @@ function App() {
         ? [...current.requiredFeatures, value]
         : current.requiredFeatures.filter((feature) => feature !== value),
     }))
+    setValidationErrors((current) => ({ ...current, requiredFeatures: '' }))
     setSelectedPreset('')
     setRequestMessage('')
   }
@@ -70,12 +74,23 @@ function App() {
 
     setSelectedPreset(presetId)
     setRequirements(preset ? preset.requirements : blankRequirements)
+    setValidationErrors({})
     setRequestStatus('idle')
     setRequestMessage('')
   }
 
   async function handleSubmit(event) {
     event.preventDefault()
+    const errors = validateRequirements(requirements)
+
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors)
+      setRequestStatus('error')
+      setRequestMessage('Fix the highlighted fields before generating.')
+      return
+    }
+
+    setValidationErrors({})
     setRequestStatus('loading')
     setRequestMessage('')
 
@@ -117,7 +132,7 @@ function App() {
             </div>
           </div>
 
-          <form className="requirements-form" onSubmit={handleSubmit}>
+          <form className="requirements-form" onSubmit={handleSubmit} noValidate>
             <label className="form-field preset-field">
               <span>Example preset</span>
               <select value={selectedPreset} onChange={handlePresetChange}>
@@ -141,8 +156,17 @@ function App() {
                 placeholder="Example: AI automation agency"
                 minLength="2"
                 maxLength="80"
+                aria-invalid={Boolean(validationErrors.businessType)}
+                aria-describedby={
+                  validationErrors.businessType ? 'business-type-error' : undefined
+                }
                 required
               />
+              {validationErrors.businessType && (
+                <span className="field-error" id="business-type-error">
+                  {validationErrors.businessType}
+                </span>
+              )}
             </label>
 
             <label className="form-field">
@@ -155,8 +179,17 @@ function App() {
                 placeholder="Example: NovaFlow"
                 minLength="2"
                 maxLength="80"
+                aria-invalid={Boolean(validationErrors.companyName)}
+                aria-describedby={
+                  validationErrors.companyName ? 'company-name-error' : undefined
+                }
                 required
               />
+              {validationErrors.companyName && (
+                <span className="field-error" id="company-name-error">
+                  {validationErrors.companyName}
+                </span>
+              )}
             </label>
 
             <label className="form-field">
@@ -184,11 +217,31 @@ function App() {
                 placeholder="Example: Small business owners"
                 minLength="2"
                 maxLength="160"
+                aria-invalid={Boolean(validationErrors.targetAudience)}
+                aria-describedby={
+                  validationErrors.targetAudience
+                    ? 'target-audience-error'
+                    : undefined
+                }
                 required
               />
+              {validationErrors.targetAudience && (
+                <span className="field-error" id="target-audience-error">
+                  {validationErrors.targetAudience}
+                </span>
+              )}
             </label>
 
-            <fieldset className="feature-fieldset">
+            <fieldset
+              className={`feature-fieldset ${
+                validationErrors.requiredFeatures ? 'has-error' : ''
+              }`}
+              aria-describedby={
+                validationErrors.requiredFeatures
+                  ? 'required-features-error'
+                  : undefined
+              }
+            >
               <legend>Required website features</legend>
               <div className="feature-options">
                 {featureOptions.map((feature) => (
@@ -203,6 +256,11 @@ function App() {
                   </label>
                 ))}
               </div>
+              {validationErrors.requiredFeatures && (
+                <span className="field-error" id="required-features-error">
+                  {validationErrors.requiredFeatures}
+                </span>
+              )}
             </fieldset>
 
             <button

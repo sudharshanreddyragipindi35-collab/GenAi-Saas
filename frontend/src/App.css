@@ -130,6 +130,21 @@
   border-color: #2563eb;
 }
 
+.form-field input[aria-invalid='true'] {
+  border-color: #d64545;
+}
+
+.form-field input[aria-invalid='true']:focus {
+  outline-color: rgba(214, 69, 69, 0.18);
+  border-color: #d64545;
+}
+
+.field-error {
+  color: #8a2525;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .preset-field {
   border-bottom: 1px solid #e4e7ec;
   padding-bottom: 16px;
@@ -149,10 +164,16 @@
   font-weight: 700;
 }
 
+.feature-fieldset.has-error {
+  border-radius: 8px;
+  outline: 2px solid rgba(214, 69, 69, 0.18);
+}
+
 .feature-options {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
+  margin-bottom: 8px;
 }
 
 .feature-option {
