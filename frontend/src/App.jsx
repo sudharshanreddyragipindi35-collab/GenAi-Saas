@@ -30,6 +30,12 @@ function App() {
     status: 'checking',
     mode: '',
   })
+  const hasValidationErrors = Object.keys(validationErrors).length > 0
+  const showGenerationError =
+    requestStatus === 'error' &&
+    requestMessage &&
+    !generatedDraft &&
+    !hasValidationErrors
 
   useEffect(() => {
     const controller = new AbortController()
@@ -113,8 +119,7 @@ function App() {
     setDraftHistory(clearDraftHistory())
   }
 
-  async function handleSubmit(event) {
-    event.preventDefault()
+  async function generateDraft() {
     const errors = validateRequirements(requirements)
 
     if (Object.keys(errors).length > 0) {
@@ -140,6 +145,15 @@ function App() {
       setRequestStatus('error')
       setRequestMessage(error.message)
     }
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+    await generateDraft()
+  }
+
+  async function handleRetryGeneration() {
+    await generateDraft()
   }
 
   return (
@@ -352,6 +366,19 @@ function App() {
           </div>
           {requestStatus === 'loading' ? (
             <ResultSkeleton />
+          ) : showGenerationError ? (
+            <div className="generation-error-card" role="alert">
+              <p className="panel-label">Generation failed</p>
+              <h3>Unable to create this draft</h3>
+              <p>{requestMessage}</p>
+              <button
+                className="panel-action"
+                type="button"
+                onClick={handleRetryGeneration}
+              >
+                Retry generation
+              </button>
+            </div>
           ) : generatedDraft ? (
             <ResultViewer key={generatedDraft.project_id} draft={generatedDraft} />
           ) : (
