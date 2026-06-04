@@ -1,5 +1,5 @@
 const DRAFT_HISTORY_KEY = 'genai-saas:draft-history'
-const MAX_DRAFT_HISTORY_ITEMS = 5
+const MAX_DRAFT_HISTORY_ITEMS = 20
 
 function canUseStorage() {
   return typeof window !== 'undefined' && Boolean(window.localStorage)
@@ -46,6 +46,14 @@ export function saveDraftToHistory(draft) {
     draft,
     ...existingHistory.filter((item) => item.project_id !== draft.project_id),
   ].slice(0, MAX_DRAFT_HISTORY_ITEMS)
+
+  return writeHistory(nextHistory)
+}
+
+export function removeDraftFromHistory(projectId) {
+  const nextHistory = loadDraftHistory().filter(
+    (draft) => draft.project_id !== projectId,
+  )
 
   return writeHistory(nextHistory)
 }

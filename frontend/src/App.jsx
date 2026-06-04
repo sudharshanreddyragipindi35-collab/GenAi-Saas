@@ -14,6 +14,7 @@ import { generateWebsiteDraft } from './services/websiteApi'
 import {
   clearDraftHistory,
   loadDraftHistory,
+  removeDraftFromHistory,
   saveDraftToHistory,
 } from './services/draftHistoryStorage'
 import { validateRequirements } from './utils/validateRequirements'
@@ -142,6 +143,16 @@ function App() {
 
   function handleClearHistory() {
     setDraftHistory(clearDraftHistory())
+  }
+
+  function handleDeleteDraft(projectId) {
+    setDraftHistory(removeDraftFromHistory(projectId))
+
+    if (generatedDraft?.project_id === projectId) {
+      setGeneratedDraft(null)
+      setRequestStatus('idle')
+      setRequestMessage('')
+    }
   }
 
   async function generateDraft() {
@@ -409,6 +420,7 @@ function App() {
           <DraftHistory
             drafts={draftHistory}
             onClearHistory={handleClearHistory}
+            onDeleteDraft={handleDeleteDraft}
             onSelectDraft={handleSelectDraft}
           />
         </section>
