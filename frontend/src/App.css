@@ -168,6 +168,23 @@
   font-weight: 700;
 }
 
+.feature-fieldset-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: -3px 0 10px;
+  color: #667085;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.feature-fieldset-meta span {
+  border: 1px solid #e4e7ec;
+  border-radius: 999px;
+  padding: 4px 8px;
+  background: #ffffff;
+}
+
 .feature-fieldset.has-error {
   border-radius: 8px;
   outline: 2px solid rgba(214, 69, 69, 0.18);
@@ -205,6 +222,25 @@
   height: 16px;
   margin: 0;
   accent-color: #2563eb;
+}
+
+.selected-feature-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 8px;
+}
+
+.selected-feature-chip {
+  max-width: 100%;
+  border: 1px solid #a6d9bb;
+  border-radius: 999px;
+  padding: 5px 8px;
+  color: #17663a;
+  background: #edf8f1;
+  font-size: 12px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
 }
 
 .primary-action {

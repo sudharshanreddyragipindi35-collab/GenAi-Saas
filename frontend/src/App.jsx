@@ -31,6 +31,7 @@ function App() {
     mode: '',
   })
   const hasValidationErrors = Object.keys(validationErrors).length > 0
+  const selectedFeatureCount = requirements.requiredFeatures.length
   const showGenerationError =
     requestStatus === 'error' &&
     requestMessage &&
@@ -293,6 +294,10 @@ function App() {
               }
             >
               <legend>Required website features</legend>
+              <div className="feature-fieldset-meta" aria-live="polite">
+                <span>{selectedFeatureCount} selected</span>
+                <span>{featureOptions.length} available</span>
+              </div>
               <div className="feature-options">
                 {featureOptions.map((feature) => (
                   <label className="feature-option" key={feature}>
@@ -306,6 +311,18 @@ function App() {
                   </label>
                 ))}
               </div>
+              {selectedFeatureCount > 0 && (
+                <div
+                  className="selected-feature-summary"
+                  aria-label="Selected website features"
+                >
+                  {requirements.requiredFeatures.map((feature) => (
+                    <span className="selected-feature-chip" key={feature}>
+                      {feature}
+                    </span>
+                  ))}
+                </div>
+              )}
               {validationErrors.requiredFeatures && (
                 <span className="field-error" id="required-features-error">
                   {validationErrors.requiredFeatures}
