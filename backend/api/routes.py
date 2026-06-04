@@ -3,6 +3,18 @@ import asyncio
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
+from backend.schemas.ai import (
+    AgentRunEnvelope,
+    AgentRunRequest,
+    LlmInvokeEnvelope,
+    LlmInvokeRequest,
+    McpToolListEnvelope,
+    RagSearchEnvelope,
+    RagSearchRequest,
+    VectorDocumentEnvelope,
+    VectorDocumentInput,
+    VectorDocumentListEnvelope,
+)
 from backend.schemas.website import (
     AiConfigEnvelope,
     HealthEnvelope,
@@ -14,12 +26,16 @@ from backend.schemas.website import (
 )
 from backend.services.claude_generator import GenerationProviderError
 from backend.services.generation_orchestrator import WebsiteGenerationOrchestrator
+from backend.services.llm_gateway import llm_gateway
+from backend.services.mcp_registry import MCP_TOOLS
+from backend.services.multi_agent_workflow import multi_agent_workflow
 from backend.services.prompt_templates import (
     PROMPT_TEMPLATE_VERSION,
     build_system_prompt,
     build_user_prompt,
 )
 from backend.services.rag_knowledge import retrieve_rag_context
+from backend.services.vector_store import vector_store
 
 
 router = APIRouter()
@@ -69,6 +85,88 @@ async def preview_prompt(
             user_prompt=build_user_prompt(payload, rag_context),
             rag_context=rag_context,
         ),
+    )
+
+
+@router.get("/mcp/tools", response_model=McpToolListEnvelope)
+async def list_mcp_tools() -> McpToolListEnvelope:
+    return McpToolListEnvelope(
+        status="success",
+        message="MCP-style tool registry loaded.",
+        data=MCP_TOOLS,
+    )
+
+
+@router.post("/llm/invoke", response_model=LlmInvokeEnvelope)
+async def invoke_llm(payload: LlmInvokeRequest) -> LlmInvokeEnvelope | JSONResponse:
+    try:
+        result = await asyncio.to_thread(llm_gateway.invoke, payload)
+    except GenerationProviderError as exc:
+        return JSONResponse(
+            status_code=502,
+            content={
+                "status": "error",
+                "message": str(exc),
+            },
+        )
+
+    return LlmInvokeEnvelope(
+        status="success",
+        message="LLM invocation completed.",
+        data=result,
+    )
+
+
+@router.get("/vector/documents", response_model=VectorDocumentListEnvelope)
+async def list_vector_documents() -> VectorDocumentListEnvelope:
+    return VectorDocumentListEnvelope(
+        status="success",
+        message="Vector documents loaded.",
+        data=vector_store.list_documents(),
+    )
+
+
+@router.post("/vector/documents", response_model=VectorDocumentEnvelope)
+async def upsert_vector_document(
+    payload: VectorDocumentInput,
+) -> VectorDocumentEnvelope:
+    return VectorDocumentEnvelope(
+        status="success",
+        message="Vector document upserted.",
+        data=vector_store.upsert_document(payload),
+    )
+
+
+@router.post("/rag/search", response_model=RagSearchEnvelope)
+async def search_rag(payload: RagSearchRequest) -> RagSearchEnvelope:
+    return RagSearchEnvelope(
+        status="success",
+        message="RAG search completed.",
+        data=vector_store.search(
+            payload.query,
+            top_k=payload.top_k,
+            categories=payload.categories,
+        ),
+    )
+
+
+@router.post("/agents/run", response_model=AgentRunEnvelope)
+async def run_agents(payload: AgentRunRequest) -> AgentRunEnvelope | JSONResponse:
+    try:
+        result = await asyncio.to_thread(multi_agent_workflow.run, payload)
+    except GenerationProviderError as exc:
+        return JSONResponse(
+            status_code=502,
+            content={
+                "status": "error",
+                "message": str(exc),
+            },
+        )
+
+    return AgentRunEnvelope(
+        status="success",
+        message="Multi-agent workflow completed.",
+        data=result,
     )
 
 

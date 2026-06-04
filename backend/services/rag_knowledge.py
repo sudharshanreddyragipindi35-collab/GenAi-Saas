@@ -103,19 +103,13 @@ def retrieve_rag_context(
     if not settings.rag_enabled:
         return []
 
-    query_terms = _payload_terms(payload)
-    scored_documents = []
+    from backend.services.vector_store import vector_store
 
-    for document in KNOWLEDGE_BASE:
-        keyword_score = sum(2 for keyword in document.keywords if keyword in query_terms)
-        content_score = len(_tokens(document.content) & query_terms)
-        score = keyword_score + content_score
+    query = " ".join(sorted(_payload_terms(payload)))
+    results = vector_store.search(query, top_k=limit)
 
-        if score > 0:
-            scored_documents.append((score, document))
-
-    if not scored_documents:
-        scored_documents = [(1, KNOWLEDGE_BASE[0]), (1, KNOWLEDGE_BASE[1])]
+    if results:
+        return results
 
     return [
         RagContextItem(
@@ -123,11 +117,7 @@ def retrieve_rag_context(
             title=document.title,
             category=document.category,
             content=document.content,
-            score=score,
+            score=1,
         )
-        for score, document in sorted(
-            scored_documents,
-            key=lambda item: (item[0], item[1].title),
-            reverse=True,
-        )[:limit]
+        for document in KNOWLEDGE_BASE[:2]
     ]

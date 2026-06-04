@@ -318,6 +318,7 @@ function App() {
               promptPreview={promptPreview}
               promptPreviewMessage={promptPreviewMessage}
               promptPreviewStatus={promptPreviewStatus}
+              requirements={requirements}
             />
 
             <label className="form-field">
