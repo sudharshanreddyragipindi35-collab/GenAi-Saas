@@ -8,6 +8,8 @@ function ResultViewer({ draft }) {
   const [copyStatus, setCopyStatus] = useState('idle')
   const [downloadStatus, setDownloadStatus] = useState('idle')
   const formattedJson = JSON.stringify(draft, null, 2)
+  const sectionCount = draft.website_structure.sections.length
+  const requestedFeatures = draft.metadata?.required_features || []
 
   function copyWithFallback(text) {
     const textArea = document.createElement('textarea')
@@ -90,7 +92,7 @@ function ResultViewer({ draft }) {
         </div>
         <div>
           <dt>Sections</dt>
-          <dd>{draft.website_structure.sections.length}</dd>
+          <dd>{sectionCount}</dd>
         </div>
         <div>
           <dt>Theme</dt>
@@ -101,6 +103,23 @@ function ResultViewer({ draft }) {
           <dd>{draft.prompt_trace.provider_mode}</dd>
         </div>
       </dl>
+
+      <div className="preview-summary-strip">
+        <div className="section-count-card">
+          <strong>{sectionCount}</strong>
+          <span>generated sections</span>
+        </div>
+
+        {requestedFeatures.length > 0 && (
+          <div className="feature-chip-group" aria-label="Requested features">
+            {requestedFeatures.map((feature) => (
+              <span className="feature-chip" key={feature}>
+                {feature}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
 
       <div className="result-toolbar">
         <div className="view-tabs" role="tablist" aria-label="Generated result view">
