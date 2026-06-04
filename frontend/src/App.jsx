@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import BackendStatus from './components/BackendStatus'
+import DraftHistory from './components/DraftHistory'
 import ResultViewer from './components/ResultViewer'
 import ResultSkeleton from './components/ResultSkeleton'
 import {
@@ -10,6 +11,11 @@ import {
 } from './data/requirementPresets'
 import { getBackendHealth } from './services/systemApi'
 import { generateWebsiteDraft } from './services/websiteApi'
+import {
+  clearDraftHistory,
+  loadDraftHistory,
+  saveDraftToHistory,
+} from './services/draftHistoryStorage'
 import { validateRequirements } from './utils/validateRequirements'
 
 function App() {
@@ -19,6 +25,7 @@ function App() {
   const [requestStatus, setRequestStatus] = useState('idle')
   const [requestMessage, setRequestMessage] = useState('')
   const [validationErrors, setValidationErrors] = useState({})
+  const [draftHistory, setDraftHistory] = useState(loadDraftHistory)
   const [backendHealth, setBackendHealth] = useState({
     status: 'checking',
     mode: '',
@@ -94,6 +101,18 @@ function App() {
     setRequestMessage('')
   }
 
+  function handleSelectDraft(draft) {
+    setGeneratedDraft(draft)
+    setSelectedPreset('')
+    setValidationErrors({})
+    setRequestStatus('success')
+    setRequestMessage(`Loaded ${draft.company_name} from local history.`)
+  }
+
+  function handleClearHistory() {
+    setDraftHistory(clearDraftHistory())
+  }
+
   async function handleSubmit(event) {
     event.preventDefault()
     const errors = validateRequirements(requirements)
@@ -113,6 +132,7 @@ function App() {
     try {
       const draft = await generateWebsiteDraft(requirements)
       setGeneratedDraft(draft)
+      setDraftHistory(saveDraftToHistory(draft))
       setRequestStatus('success')
       setRequestMessage('Website draft generated successfully.')
     } catch (error) {
@@ -305,6 +325,12 @@ function App() {
               </p>
             )}
           </form>
+
+          <DraftHistory
+            drafts={draftHistory}
+            onClearHistory={handleClearHistory}
+            onSelectDraft={handleSelectDraft}
+          />
         </section>
 
         <section className="workspace-panel">
