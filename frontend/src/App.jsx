@@ -80,6 +80,20 @@ function App() {
     setRequestMessage('')
   }
 
+  function handleResetForm() {
+    setRequirements(blankRequirements)
+    setSelectedPreset('')
+    setValidationErrors({})
+    setRequestStatus('idle')
+    setRequestMessage('')
+  }
+
+  function handleClearResult() {
+    setGeneratedDraft(null)
+    setRequestStatus('idle')
+    setRequestMessage('')
+  }
+
   async function handleSubmit(event) {
     event.preventDefault()
     const errors = validateRequirements(requirements)
@@ -273,6 +287,15 @@ function App() {
               {requestStatus === 'loading' ? 'Generating draft' : 'Generate draft'}
             </button>
 
+            <button
+              className="secondary-action"
+              type="button"
+              disabled={requestStatus === 'loading'}
+              onClick={handleResetForm}
+            >
+              Reset form
+            </button>
+
             {requestMessage && (
               <p
                 className={`form-status ${requestStatus}`}
@@ -291,6 +314,15 @@ function App() {
               <p className="panel-label">Output</p>
               <h2>Generated website result</h2>
             </div>
+            {generatedDraft && requestStatus !== 'loading' && (
+              <button
+                className="panel-action"
+                type="button"
+                onClick={handleClearResult}
+              >
+                Clear result
+              </button>
+            )}
           </div>
           {requestStatus === 'loading' ? (
             <ResultSkeleton />
