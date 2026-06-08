@@ -14,6 +14,13 @@ JSON_RULES = (
     "Return valid JSON only. Do not use markdown. Do not explain. "
     "Do not wrap the response in backticks."
 )
+FINAL_WEBSITE_SCHEMA_RULES = (
+    "The final website JSON must use theme keys exactly: primaryColor, "
+    "secondaryColor, backgroundColor, textColor. Do not use primary, secondary, "
+    "background, text, primary_color, secondary_color, background_color, or "
+    "text_color. seo.keywords must always be an array of strings, never a "
+    "comma-separated string."
+)
 logger = logging.getLogger(__name__)
 
 
@@ -97,7 +104,7 @@ def build_seo_content_prompt(analyzed_requirements, rag_context):
         "SEO Content Agent",
         SEO_CONTENT_SYSTEM_PROMPT,
         (
-            f"{JSON_RULES}\n\nGenerate SEO JSON from:\n"
+            f"{JSON_RULES}\n{FINAL_WEBSITE_SCHEMA_RULES}\n\nGenerate SEO JSON from:\n"
             f"Analyzed requirements:\n{_to_json(analyzed_requirements)}\n\n"
             f"RAG context:\n{rag_text}"
         ),
@@ -116,7 +123,7 @@ def build_ui_content_prompt(
         "UI Content Agent",
         UI_CONTENT_SYSTEM_PROMPT,
         (
-            f"{JSON_RULES}\n\nGenerate final website JSON from:\n"
+            f"{JSON_RULES}\n{FINAL_WEBSITE_SCHEMA_RULES}\n\nGenerate final website JSON from:\n"
             f"Analyzed requirements:\n{_to_json(analyzed_requirements)}\n\n"
             f"Website structure:\n{_to_json(website_structure)}\n\n"
             f"SEO content:\n{_to_json(seo_content)}\n\n"
@@ -131,7 +138,7 @@ def build_validation_prompt(generated_website, original_request):
         "Validation Agent",
         VALIDATION_SYSTEM_PROMPT,
         (
-            f"{JSON_RULES}\n\nRepair this website JSON so it matches the original request.\n"
+            f"{JSON_RULES}\n{FINAL_WEBSITE_SCHEMA_RULES}\n\nRepair this website JSON so it matches the original request.\n"
             f"Generated website:\n{_to_json(generated_website)}\n\n"
             f"Original request:\n{_to_json(original_request)}"
         ),
